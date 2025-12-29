@@ -1,7 +1,6 @@
 import pytest
 import requests
 import random
-import string
 from typing import Any, Dict
 
 BASE_URL = "https://qa-internship.avito.com"
