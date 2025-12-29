@@ -2,6 +2,7 @@ import pytest
 import requests
 import random
 from typing import Any, Dict
+import re
 
 BASE_URL = "https://qa-internship.avito.com"
 
@@ -41,18 +42,29 @@ def item_body(seller_id) -> Dict[str, Any]:
 
 # Create an item and return its ID for testing get item by ID
 @pytest.fixture
-def created_item(item_body) -> str:
+def created_item(item_body):
+    """
+    Create an item and return its ID for testing get item by ID.
+    
+    :param item_body: Description
+    """
     url = f"{BASE_URL}/api/1/item"
     response = requests.post(url, json=item_body)
     response.raise_for_status()
     
     resp_json = response.json()
     
-    if "status" in resp_json and "id" not in resp_json:
-        # for error  
-        pass
-        
-    return resp_json.get("id")
+    if "id" in resp_json:
+        return resp_json["id"]
+    
+    if "status" in resp_json:
+        status_text = resp_json["status"]
+        match = re.search(r'[a-f0-9\-]{36}', status_text)
+        if match:
+            return match.group(0)
+            
+    return None
+
 
 
 class TestAvitoAPI:
