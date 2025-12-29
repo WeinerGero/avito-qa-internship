@@ -183,5 +183,14 @@ class TestAvitoAPI:
         
         assert response.status_code == 400, f"Expected 400 Bad Request, got {response.status_code}"
 
-
-
+    def test_get_non_existent_item(self):
+        """
+        The sixth test case. Negative test. Requesting a non-existent ID.
+        """
+        # create a fake UUID
+        fake_id = "00000000-0000-0000-0000-000000000000"
+        url = f"{BASE_URL}/api/1/item/{fake_id}"
+        
+        response = requests.get(url)
+        
+        assert response.status_code == 404, f"Expected 404 Not Found, got {response.status_code}"
