@@ -103,3 +103,45 @@ class TestAvitoAPI:
         assert item_data["price"] == item_body["price"]
 
 
+    def test_get_items_by_seller_id(self, seller_id, item_body):
+        """
+        The third test case. Get all ads by sellerID (GET).
+        
+        :param seller_id: Description
+        :param item_body: Description
+        """
+
+        requests.post(f"{BASE_URL}/api/1/item", json=item_body)
+        
+        body_2 = item_body.copy()
+        body_2["name"] = "Товар 2"
+        requests.post(f"{BASE_URL}/api/1/item", json=body_2)
+
+        url = f"{BASE_URL}/api/1/{seller_id}/item"
+        response = requests.get(url)
+
+        assert response.status_code == 200, f"Expected 200, got {response.status_code}"
+        
+        items = response.json()
+        
+        assert isinstance(items, list), f"Expected list, got {type(items)}"
+        
+        assert len(items) >= 2, "Expected at least 2 items for this seller"
+        
+        for item in items:
+            assert item["sellerId"] == seller_id, \
+                f"Item belongs to wrong seller: {item['sellerId']}"
+            
+            assert "id" in item, "Item missing 'id'"
+            assert "createdAt" in item, "Item missing 'createdAt'"
+            assert "name" in item, "Item missing 'name'"
+            assert "price" in item, "Item missing 'price'"
+            
+            assert "statistics" in item, "Item missing 'statistics'"
+            stats = item["statistics"]
+            assert "likes" in stats
+            assert "viewCount" in stats
+            assert "contacts" in stats
+
+
+
