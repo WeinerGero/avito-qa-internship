@@ -143,5 +143,26 @@ class TestAvitoAPI:
             assert "viewCount" in stats
             assert "contacts" in stats
 
+    def test_get_statistic(self, item_body, created_item):
+        """
+        The fourth test case. Get statistics for an ad (GET).
+        
+        :param item_body: Description
+        :param created_item: Description
+        """
+        item_id = created_item
+        url = f"{BASE_URL}/api/1/statistic/{item_id}"
+        
+        response = requests.get(url)
+        assert response.status_code == 200
+        
+        stats = response.json()
+        
+        if isinstance(stats, list):
+            stats = stats[0]
+            
+        assert stats["likes"] == item_body["statistics"]["likes"]
+        assert stats["viewCount"] == item_body["statistics"]["viewCount"]
+        assert stats["contacts"] == item_body["statistics"]["contacts"]
 
 
