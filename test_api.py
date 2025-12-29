@@ -2,13 +2,14 @@ import pytest
 import requests
 import random
 import string
+from typing import Any, Dict
 
 BASE_URL = "https://qa-internship.avito.com"
 
 
 # Create a random UUID for testing
 @pytest.fixture
-def seller_id():
+def seller_id() -> int:
     """_summary_
 
     Returns:
@@ -19,7 +20,7 @@ def seller_id():
 
 # Create body for POST request for testing create item
 @pytest.fixture
-def item_body(seller_id):
+def item_body(seller_id) -> Dict[str, Any]:
     """
     Docstring for item_body
     
@@ -40,21 +41,22 @@ def item_body(seller_id):
 
 
 class TestAvitoAPI:
-    def test_create_item(self):
-        pass
-
-    def test_get_item_by_id(self):
-        pass
+    
+    def test_create_item(self, item_body):
+        """
+        The first test case. Register a new ad (POST).
         
-    def test_get_items_by_seller_id(self):
-        pass
-    
-    
-    def test_get_statistic(self):
-        pass
-    
-    
-    def test_item_not_found(self):
-        pass
-    
-    
+        :param item_body: Description
+        """
+
+        url = f"{BASE_URL}/api/1/item"
+        response = requests.post(url, json=item_body)
+
+        assert response.status_code == 200, f"Expected 200, got {response.status_code}"
+
+        resp_data = response.json()
+
+        assert "status" in resp_data or "id" in resp_data, "Response should contain 'status' or 'id'"
+
+
+
