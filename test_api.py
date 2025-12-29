@@ -165,4 +165,23 @@ class TestAvitoAPI:
         assert stats["viewCount"] == item_body["statistics"]["viewCount"]
         assert stats["contacts"] == item_body["statistics"]["contacts"]
 
+    def test_create_item_invalid_price(self, seller_id):
+        """
+        The fifth test case. Negative test case. Create with invalid price.
+        
+        :param seller_id: Description
+        """
+        body = {
+            "sellerID": seller_id,
+            "name": "Bad Price Item",
+            "price": -100,  # Error
+            "statistics": {}
+        }
+        
+        url = f"{BASE_URL}/api/1/item"
+        response = requests.post(url, json=body)
+        
+        assert response.status_code == 400, f"Expected 400 Bad Request, got {response.status_code}"
+
+
 
